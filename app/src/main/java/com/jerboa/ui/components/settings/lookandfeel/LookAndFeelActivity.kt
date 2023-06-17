@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.alorma.compose.settings.storage.base.SettingValueState
@@ -28,6 +29,7 @@ import com.jerboa.db.AppSettings
 import com.jerboa.db.AppSettingsViewModel
 import com.jerboa.db.DEFAULT_FONT_SIZE
 import com.jerboa.ui.components.common.SimpleTopAppBar
+import com.jerboa.ui.theme.Shapes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,6 +81,7 @@ fun LookAndFeelActivity(
                     }
                 )
                 SettingsList(
+                    modifier = Modifier.clip(Shapes.large),
                     state = themeState,
                     items = ThemeMode.values().map { it.name },
                     icon = {
@@ -102,6 +105,7 @@ fun LookAndFeelActivity(
                     }
                 )
                 SettingsList(
+                    modifier = Modifier.clip(Shapes.large),
                     state = themeColorState,
                     items = ThemeColor.values().map { it.name },
                     icon = {
@@ -124,29 +128,29 @@ fun LookAndFeelActivity(
                         )
                     }
                 )
-                SettingsList(
-                    state = postViewModeState,
-                    items = PostViewMode.values().map { it.mode },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Outlined.ViewList,
-                            contentDescription = "TODO"
-                        )
-                    },
-                    title = {
-                        Text(text = "Post View")
-                    },
-                    onItemSelected = { i, _ ->
-                        postViewModeState.value = i
-                        updateAppSettings(
-                            appSettingsViewModel,
-                            fontSizeState,
-                            themeState,
-                            themeColorState,
-                            postViewModeState
-                        )
-                    }
-                )
+//                SettingsList(
+//                    state = postViewModeState,
+//                    items = PostViewMode.values().map { it.mode },
+//                    icon = {
+//                        Icon(
+//                            imageVector = Icons.Outlined.ViewList,
+//                            contentDescription = "TODO"
+//                        )
+//                    },
+//                    title = {
+//                        Text(text = "Post View")
+//                    },
+//                    onItemSelected = { i, _ ->
+//                        postViewModeState.value = i
+//                        updateAppSettings(
+//                            appSettingsViewModel,
+//                            fontSizeState,
+//                            themeState,
+//                            themeColorState,
+//                            postViewModeState
+//                        )
+//                    }
+//                )
             }
         }
     )

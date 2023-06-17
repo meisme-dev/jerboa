@@ -99,6 +99,7 @@ fun CommentNodeHeader(
         isPostCreator = isPostCreator(commentView),
         isModerator = isModerator,
         isCommunityBanned = commentView.creator_banned_from_community,
+        style = MaterialTheme.typography.titleMedium,
         onLongClick = onLongClick
     )
 }
@@ -135,7 +136,7 @@ fun CommentBody(
             )
         }
     } else {
-        MyMarkdownText(markdown = content)
+        MyMarkdownText(markdown = content, style = MaterialTheme.typography.bodyLarge)
     }
 }
 
@@ -204,7 +205,7 @@ fun LazyListScope.commentNodeItem(
                     start = offset
                 )
         ) {
-            Divider()
+//            Divider()
             Column(
                 modifier = Modifier.border(start = border)
             ) {

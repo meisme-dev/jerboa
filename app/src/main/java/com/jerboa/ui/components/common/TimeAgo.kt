@@ -86,7 +86,7 @@ fun ScoreAndTime(
         Text(
             text = score.toString(),
             color = scoreColor(myVote = myVote),
-            fontSize = MaterialTheme.typography.bodyMedium.fontSize.times(1.3)
+            style = MaterialTheme.typography.bodyMedium
         )
         DotSpacer(0.dp, MaterialTheme.typography.bodyMedium)
         TimeAgo(published = published, updated = updated)

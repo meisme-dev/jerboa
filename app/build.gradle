@@ -8,7 +8,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.jerboa"
+        applicationId "com.jerboa.testing"
         namespace "com.jerboa"
         minSdk 26
         targetSdk 33
@@ -42,6 +42,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
             if(project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.release
             }
@@ -75,6 +76,10 @@ dependencies {
     implementation 'com.google.accompanist:accompanist-pager-indicators:0.30.1'
     implementation 'com.google.accompanist:accompanist-swiperefresh:0.30.1'
     implementation 'com.google.accompanist:accompanist-flowlayout:0.30.1'
+    implementation 'com.google.accompanist:accompanist-navigation-animation:0.31.3-beta'
+
+    // Icons
+    implementation 'br.com.devsrsouza.compose.icons:tabler-icons:1.1.0'
 
     // LiveData
     implementation 'androidx.compose.runtime:runtime-livedata:1.4.3'

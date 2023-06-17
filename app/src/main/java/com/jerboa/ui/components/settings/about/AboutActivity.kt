@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -30,6 +31,7 @@ import com.alorma.compose.settings.ui.SettingsMenuLink
 import com.jerboa.R
 import com.jerboa.openLink
 import com.jerboa.ui.components.common.SimpleTopAppBar
+import com.jerboa.ui.theme.Shapes
 
 const val githubUrl = "https://github.com/dessalines/jerboa"
 const val jerboaMatrixChat = "https://matrix.to/#/#jerboa-dev:matrix.org"
@@ -58,6 +60,7 @@ fun AboutActivity(
         content = { padding ->
             Column(modifier = Modifier.padding(padding)) {
                 SettingsMenuLink(
+                    modifier = Modifier.clip(Shapes.large),
                     title = { Text("What's New") },
                     subtitle = { Text("Version $version") },
                     icon = {
@@ -73,6 +76,7 @@ fun AboutActivity(
                 SettingsDivider()
                 SettingsHeader(text = "Support")
                 SettingsMenuLink(
+                    modifier = Modifier.clip(Shapes.large),
                     title = { Text("Issue tracker") },
                     icon = {
                         Icon(
@@ -85,6 +89,7 @@ fun AboutActivity(
                     }
                 )
                 SettingsMenuLink(
+                    modifier = Modifier.clip(Shapes.large),
                     title = { Text("Developer Matrix chatroom") },
                     icon = {
                         Icon(
@@ -97,6 +102,7 @@ fun AboutActivity(
                     }
                 )
                 SettingsMenuLink(
+                    modifier = Modifier.clip(Shapes.large),
                     title = { Text("Donate to Jerboa development") },
                     icon = {
                         Icon(
@@ -111,6 +117,7 @@ fun AboutActivity(
                 SettingsDivider()
                 SettingsHeader(text = "Social")
                 SettingsMenuLink(
+                    modifier = Modifier.clip(Shapes.large),
                     title = { Text("Join c/jerboa") },
                     icon = {
                         Icon(
@@ -124,6 +131,7 @@ fun AboutActivity(
                     }
                 )
                 SettingsMenuLink(
+                    modifier = Modifier.clip(Shapes.large),
                     title = { Text("Follow on Mastodon") },
                     icon = {
                         Icon(
@@ -138,7 +146,8 @@ fun AboutActivity(
                 SettingsDivider()
                 SettingsHeader(text = "Open source")
                 SettingsMenuLink(
-                    modifier = Modifier.padding(top = 20.dp),
+                    modifier = Modifier.padding(top = 20.dp)
+                        .clip(Shapes.large),
                     title = { Text("Source code") },
                     subtitle = {
                         Text(

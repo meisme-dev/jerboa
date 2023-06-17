@@ -1,5 +1,10 @@
 package com.jerboa.ui.components.common
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.outlined.ArrowDownward
+import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -47,11 +52,11 @@ fun <T> VoteGeneric(
 fun upvoteIconAndColor(myVote: Int?): Pair<ImageVector, Color> {
     return when (myVote) {
         1 -> Pair(
-            ImageVector.vectorResource(id = R.drawable.up_filled),
+            Icons.Filled.ArrowUpward,
             scoreColor(myVote = myVote)
         )
         else -> Pair(
-            ImageVector.vectorResource(id = R.drawable.up_outline),
+            Icons.Outlined.ArrowUpward,
             MaterialTheme
                 .colorScheme.onBackground.muted
         )
@@ -62,11 +67,11 @@ fun upvoteIconAndColor(myVote: Int?): Pair<ImageVector, Color> {
 fun downvoteIconAndColor(myVote: Int?): Pair<ImageVector, Color> {
     return when (myVote) {
         -1 -> Pair(
-            ImageVector.vectorResource(id = R.drawable.down_filled),
+            Icons.Filled.ArrowDownward,
             scoreColor(myVote = myVote)
         )
         else -> Pair(
-            ImageVector.vectorResource(id = R.drawable.down_outline),
+            Icons.Outlined.ArrowDownward,
             MaterialTheme
                 .colorScheme.onBackground.muted
         )

@@ -1,6 +1,7 @@
 package com.jerboa.ui.components.post
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,9 @@ import androidx.compose.material.icons.outlined.Restore
 import androidx.compose.material.icons.outlined.Textsms
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,11 +45,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -90,13 +97,16 @@ import com.jerboa.ui.components.community.CommunityName
 import com.jerboa.ui.components.person.PersonProfileLink
 import com.jerboa.ui.theme.ACTION_BAR_ICON_SIZE
 import com.jerboa.ui.theme.CARD_COLORS
+import com.jerboa.ui.theme.ICON_SIZE
 import com.jerboa.ui.theme.LARGER_ICON_THUMBNAIL_SIZE
 import com.jerboa.ui.theme.LARGE_PADDING
 import com.jerboa.ui.theme.LINK_ICON_SIZE
 import com.jerboa.ui.theme.MEDIUM_ICON_SIZE
 import com.jerboa.ui.theme.MEDIUM_PADDING
 import com.jerboa.ui.theme.POST_LINK_PIC_SIZE
+import com.jerboa.ui.theme.SMALL_ICON_SIZE
 import com.jerboa.ui.theme.SMALL_PADDING
+import com.jerboa.ui.theme.XL_PADDING
 import com.jerboa.ui.theme.XXL_PADDING
 import com.jerboa.ui.theme.muted
 
@@ -114,19 +124,24 @@ fun PostHeaderLine(
     val community = postView.community
     Column(modifier = modifier) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = MEDIUM_PADDING),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(LARGE_PADDING),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = MEDIUM_PADDING)
             ) {
                 if (showCommunityName) {
                     community.icon?.let {
                         CircularIcon(
                             icon = it,
-                            size = MEDIUM_ICON_SIZE,
-                            modifier = Modifier.clickable { onCommunityClick(community) },
+                            size = ICON_SIZE,
+                            modifier = Modifier.clickable { onCommunityClick(community) }
+                                .padding(top = SMALL_PADDING),
                             thumbnailSize = LARGER_ICON_THUMBNAIL_SIZE
                         )
                     }
@@ -181,12 +196,16 @@ fun PostHeaderLine(
                     }
                 }
             }
-            ScoreAndTime(
-                score = score,
-                myVote = myVote,
-                published = postView.post.published,
-                updated = postView.post.updated
-            )
+            Box(
+                modifier = Modifier.padding(horizontal = MEDIUM_PADDING)
+            ) {
+                ScoreAndTime(
+                    score = score,
+                    myVote = myVote,
+                    published = postView.post.published,
+                    updated = postView.post.updated
+                )
+            }
         }
         Row {
             if (postView.post.deleted) {
@@ -241,6 +260,7 @@ fun PostNodeHeader(
 fun PostTitleBlock(
     postView: PostView,
     expandedImage: Boolean,
+    fullBody: Boolean = false,
     onPostLinkClick: (url: String) -> Unit,
     account: Account?
 ) {
@@ -249,12 +269,14 @@ fun PostTitleBlock(
     if (imagePost && expandedImage) {
         PostTitleAndImageLink(
             postView = postView,
+            fullBody = fullBody,
             onPostLinkClick = onPostLinkClick
         )
     } else {
         PostTitleAndThumbnail(
             postView = postView,
             onPostLinkClick = onPostLinkClick,
+            fullBody = fullBody,
             account = account
         )
     }
@@ -262,7 +284,8 @@ fun PostTitleBlock(
 
 @Composable
 fun PostName(
-    postView: PostView
+    postView: PostView,
+    fullBody: Boolean = false
 ) {
     var color = if (postView.post.featured_local) {
         MaterialTheme.colorScheme.primary
@@ -275,17 +298,24 @@ fun PostName(
     if (postView.read) {
         color = color.muted
     }
-
+    val style = if(fullBody) {
+        MaterialTheme.typography.headlineSmall
+    } else {
+        MaterialTheme.typography.titleLarge
+    }
     Text(
         text = postView.post.name,
-        style = MaterialTheme.typography.titleLarge,
-        color = color
+        style = style,
+        fontWeight = FontWeight.Medium,
+        color = color,
+        modifier = Modifier.padding(horizontal = LARGE_PADDING)
     )
 }
 
 @Composable
 fun PostTitleAndImageLink(
     postView: PostView,
+    fullBody: Boolean = false,
     onPostLinkClick: (url: String) -> Unit
 ) {
     // This was tested, we know it exists
@@ -300,7 +330,8 @@ fun PostTitleAndImageLink(
     ) {
         // Title of the post
         PostName(
-            postView = postView
+            postView = postView,
+            fullBody = fullBody
         )
     }
 
@@ -316,6 +347,7 @@ fun PostTitleAndImageLink(
 @Composable
 fun PostTitleAndThumbnail(
     postView: PostView,
+    fullBody: Boolean = false,
     onPostLinkClick: (url: String) -> Unit,
     account: Account?
 ) {
@@ -330,7 +362,7 @@ fun PostTitleAndThumbnail(
                 verticalArrangement = Arrangement.spacedBy(MEDIUM_PADDING),
                 modifier = Modifier.weight(1f)
             ) {
-                PostName(postView = postView)
+                PostName(postView = postView, fullBody = fullBody)
                 postView.post.url?.also { postUrl ->
                     if (!isSameInstance(postUrl, account?.instance)) {
                         val hostName = hostName(postUrl)
@@ -338,7 +370,10 @@ fun PostTitleAndThumbnail(
                             Text(
                                 text = it,
                                 color = MaterialTheme.colorScheme.onBackground.muted,
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier
+                                    .padding(top = MEDIUM_PADDING)
+                                    .padding(horizontal = LARGE_PADDING)
                             )
                         }
                     }
@@ -359,12 +394,13 @@ fun PostBody(
 ) {
     val post = postView.post
     Column(
-        verticalArrangement = Arrangement.spacedBy(MEDIUM_PADDING)
+        verticalArrangement = Arrangement.spacedBy(SMALL_PADDING)
     ) {
         PostTitleBlock(
             postView = postView,
             expandedImage = expandedImage,
             onPostLinkClick = onPostLinkClick,
+            fullBody = fullBody,
             account = account
         )
 
@@ -378,31 +414,23 @@ fun PostBody(
 
         // The desc
         body?.also { text ->
-            Card(
-                colors = CARD_COLORS,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier
-                    .padding(vertical = MEDIUM_PADDING, horizontal = MEDIUM_PADDING)
-                    .fillMaxWidth(),
-                content = {
                     if (fullBody) {
                         Column(
                             modifier = Modifier
-                                .padding(MEDIUM_PADDING)
+                                .padding(horizontal = XXL_PADDING, vertical = MEDIUM_PADDING)
                         ) {
                             MyMarkdownText(
-                                markdown = text
+                                markdown = text,
+                                style = MaterialTheme.typography.bodyLarge
                             )
                         }
                     } else {
                         PreviewLines(
                             text = text,
                             modifier = Modifier
-                                .padding(MEDIUM_PADDING)
+                                .padding(horizontal = XXL_PADDING)
                         )
                     }
-                }
-            )
         }
     }
 }
@@ -473,10 +501,8 @@ fun PostFooterLine(
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = SMALL_PADDING)
     ) {
         CommentCount(
             comments = postView.counts.comments,
@@ -484,7 +510,7 @@ fun PostFooterLine(
             account = account
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(XXL_PADDING)
+            horizontalArrangement = Arrangement.spacedBy(MEDIUM_PADDING)
         ) {
             VoteGeneric(
                 myVote = instantScores.myVote,
@@ -544,16 +570,16 @@ fun CommentCount(
     ) {
         ActionBarButton(
             icon = Icons.Outlined.ChatBubbleOutline,
-            text = "$comments comments",
+            text = "$comments",
             noClick = true,
             account = account,
             onClick = {} // This is handled by the whole button click
         )
-        CommentNewCount(
-            comments = comments,
-            unreadCount = unreadCount,
-            spacing = SMALL_PADDING
-        )
+//        CommentNewCount(
+//            comments = comments,
+//            unreadCount = unreadCount,
+//            spacing = SMALL_PADDING
+//        )
     }
 }
 
@@ -1059,51 +1085,61 @@ fun PostListingCard(
     account: Account?,
     expandedImage: Boolean
 ) {
-    Column(
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        ),
         modifier = Modifier
-            .padding(vertical = MEDIUM_PADDING)
-            .clickable { onPostClick(postView) },
-        verticalArrangement = Arrangement.spacedBy(LARGE_PADDING)
+            .clickable {
+                onPostClick(postView)
+            }
     ) {
-        // Header
-        PostHeaderLine(
-            postView = postView,
-            myVote = instantScores.myVote,
-            score = instantScores.score,
-            onCommunityClick = onCommunityClick,
-            onPersonClick = onPersonClick,
-            isModerator = isModerator,
-            showCommunityName = showCommunityName,
-            modifier = Modifier.padding(horizontal = MEDIUM_PADDING)
-        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(LARGE_PADDING)
+        ) {
+            // Header
+            PostHeaderLine(
+                postView = postView,
+                myVote = instantScores.myVote,
+                score = instantScores.score,
+                onCommunityClick = onCommunityClick,
+                onPersonClick = onPersonClick,
+                isModerator = isModerator,
+                showCommunityName = showCommunityName,
+                modifier = Modifier
+                    .padding(horizontal = LARGE_PADDING)
+                    .padding(top = MEDIUM_PADDING)
+                    .padding(vertical = MEDIUM_PADDING)
+            )
 
-        //  Title + metadata
-        PostBody(
-            postView = postView,
-            onPostLinkClick = onPostLinkClick,
-            fullBody = fullBody,
-            expandedImage = expandedImage,
-            account = account
-        )
+            //  Title + metadata
+            PostBody(
+                postView = postView,
+                onPostLinkClick = onPostLinkClick,
+                fullBody = fullBody,
+                expandedImage = expandedImage,
+                account = account
+            )
 
-        // Footer bar
-        PostFooterLine(
-            postView = postView,
-            instantScores = instantScores,
-            onUpvoteClick = onUpvoteClick,
-            onDownvoteClick = onDownvoteClick,
-            onSaveClick = onSaveClick,
-            onReplyClick = onReplyClick,
-            onCommunityClick = onCommunityClick,
-            onEditPostClick = onEditPostClick,
-            onDeletePostClick = onDeletePostClick,
-            onReportClick = onReportClick,
-            onBlockCommunityClick = onBlockCommunityClick,
-            onBlockCreatorClick = onBlockCreatorClick,
-            showReply = showReply,
-            account = account,
-            modifier = Modifier.padding(horizontal = MEDIUM_PADDING)
-        )
+            // Footer bar
+            PostFooterLine(
+                postView = postView,
+                instantScores = instantScores,
+                onUpvoteClick = onUpvoteClick,
+                onDownvoteClick = onDownvoteClick,
+                onSaveClick = onSaveClick,
+                onReplyClick = onReplyClick,
+                onCommunityClick = onCommunityClick,
+                onEditPostClick = onEditPostClick,
+                onDeletePostClick = onDeletePostClick,
+                onReportClick = onReportClick,
+                onBlockCommunityClick = onBlockCommunityClick,
+                onBlockCreatorClick = onBlockCreatorClick,
+                showReply = showReply,
+                account = account,
+                modifier = Modifier.padding(MEDIUM_PADDING, SMALL_PADDING, SMALL_PADDING, MEDIUM_PADDING)
+            )
+        }
     }
 }
 

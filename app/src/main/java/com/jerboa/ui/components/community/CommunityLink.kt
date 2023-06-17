@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -94,18 +95,24 @@ fun CommunityLinkLarger(
     community: CommunitySafe,
     onClick: (community: CommunitySafe) -> Unit
 ) {
-    CommunityLink(
-        community = community,
-        color = MaterialTheme.colorScheme.onSurface,
-        style = MaterialTheme.typography.titleLarge,
-        size = LINK_ICON_SIZE,
-        thumbnailSize = LARGER_ICON_THUMBNAIL_SIZE,
-        spacing = DRAWER_ITEM_SPACING,
-        modifier = Modifier
-            .padding(LARGE_PADDING)
-            .fillMaxWidth(),
-        onClick = onClick
+    NavigationDrawerItem(
+        label = { Text(community.name) },
+        selected = false,
+        icon = { community.icon?.let { CircularIcon(icon = it) } },
+        onClick = { onClick.invoke(community) }
     )
+//    CommunityLink(
+//        community = community,
+//        color = MaterialTheme.colorScheme.onSurface,
+//        style = MaterialTheme.typography.titleLarge,
+//        size = LINK_ICON_SIZE,
+//        thumbnailSize = LARGER_ICON_THUMBNAIL_SIZE,
+//        spacing = DRAWER_ITEM_SPACING,
+//        modifier = Modifier
+//            .padding(LARGE_PADDING)
+//            .fillMaxWidth(),
+//        onClick = onClick
+//    )
 }
 
 @Composable

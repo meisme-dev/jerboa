@@ -14,8 +14,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmarks
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -49,6 +49,7 @@ import com.jerboa.ui.components.person.PersonProfileLink
 import com.jerboa.ui.theme.*
 import com.jerboa.unreadCountTotal
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SimpleTopAppBar(
     text: String,
@@ -82,99 +83,56 @@ fun BottomAppBarAll(
     onClickProfile: () -> Unit,
     onClickInbox: () -> Unit
 ) {
-    val totalUnreads = unreadCounts?.let { unreadCountTotal(it) }
-
-    BottomAppBar {
+    NavigationBar {
         NavigationBarItem(
             icon = {
-                if (screen == "home") {
-                    Icon(
-                        imageVector = Icons.Filled.Home,
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = "TODO"
-                    )
+                if(screen == "home") {
+                    Icon(Icons.Filled.Home, "TODO")
                 } else {
-                    Icon(
-                        imageVector = Icons.Outlined.Home,
-                        contentDescription = "TODO"
-                    )
+                    Icon(Icons.Outlined.Home, "TODO")
                 }
             },
-            selected = false,
+            selected = screen == "home",
             onClick = {
                 navController.navigate("home")
             }
         )
-
         NavigationBarItem(
             icon = {
-                Icon(
-                    imageVector = Icons.Outlined.List,
-                    contentDescription = "TODO"
-                )
-            },
-            onClick = {
-                navController.navigate("communityList")
-            },
-            selected = screen == "communityList"
-        )
-        NavigationBarItem(
-            icon = {
-                if (screen == "inbox") {
-                    InboxIconAndBadge(
-                        iconBadgeCount = totalUnreads,
-                        icon = Icons.Filled.Email,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                if(screen == "saved") {
+                    Icon(Icons.Filled.Bookmarks, "TODO")
                 } else {
-                    InboxIconAndBadge(
-                        iconBadgeCount = totalUnreads,
-                        icon = Icons.Outlined.Email
-                    )
-                }
-            },
-            onClick = {
-                onClickInbox()
-            },
-            selected = false
-        )
-        NavigationBarItem(
-            icon = {
-                if (screen == "saved") {
-                    Icon(
-                        imageVector = Icons.Filled.Bookmarks,
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = "TODO"
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Outlined.Bookmarks,
-                        contentDescription = "TODO"
-                    )
+                    Icon(Icons.Outlined.Bookmarks, "TODO")
                 }
             },
             onClick = {
                 onClickSaved()
             },
-            selected = false
+            selected = screen == "saved"
         )
         NavigationBarItem(
             icon = {
-                if (screen == "profile") {
-                    Icon(
-                        imageVector = Icons.Filled.Person,
-                        tint = MaterialTheme.colorScheme.primary,
-                        contentDescription = "TODO"
-                    )
+                if(screen == "inbox") {
+                    Icon(Icons.Filled.Inbox, "TODO")
                 } else {
-                    Icon(
-                        imageVector = Icons.Outlined.Person,
-                        contentDescription = "TODO"
-                    )
+                    Icon(Icons.Outlined.Inbox, "TODO")
+                }
+            },
+            onClick = {
+                onClickInbox()
+            },
+            selected = screen == "inbox"
+        )
+        NavigationBarItem(
+            icon = {
+                if(screen == "profile") {
+                    Icon(Icons.Filled.Person, "TODO")
+                } else {
+                    Icon(Icons.Outlined.Person, "TODO")
                 }
             },
             onClick = onClickProfile,
-            selected = false
+            selected = screen == "profile"
         )
     }
 }
@@ -183,6 +141,7 @@ fun BottomAppBarAll(
 @Composable
 fun BottomAppBarAllPreview() {
     BottomAppBarAll(
+
         onClickInbox = {},
         onClickProfile = {},
         onClickSaved = {},
@@ -195,6 +154,7 @@ fun BottomAppBarAllPreview() {
 fun CommentOrPostNodeHeader(
     creator: PersonSafe,
     score: Int,
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
     myVote: Int?,
     published: String,
     updated: String?,
@@ -238,6 +198,7 @@ fun CommentOrPostNodeHeader(
                 showTags = true,
                 isPostCreator = isPostCreator,
                 isModerator = isModerator,
+                style = style,
                 isCommunityBanned = isCommunityBanned
             )
         }
@@ -272,42 +233,29 @@ fun ActionBarButton(
     account: Account?
 ) {
     val ctx = LocalContext.current
-//    Button(
-//        onClick = onClick,
-//        colors = ButtonDefaults.buttonColors(
-//            backgroundColor = Color.Transparent,
-//            contentColor = contentColor,
-//        ),
-//        shape = MaterialTheme.shapes.large,
-//        contentPadding = PaddingValues(SMALL_PADDING),
-//        elevation = null,
-//        content = content,
-//        modifier = Modifier
-//            .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
-//    )
-    val barMod = if (noClick) {
-        Modifier
-    } else {
-        Modifier.clickable(onClick = {
-            if (account !== null) {
-                onClick()
-            } else {
-                loginFirstToast(ctx)
-            }
-        })
-    }
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = barMod
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = "TODO",
-            tint = contentColor
-        )
+        IconButton(
+            onClick = {
+                if (!noClick) {
+                    if (account !== null) {
+                        onClick()
+                    } else {
+                        loginFirstToast(ctx)
+                    }
+                }
+            }
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = "TODO",
+                tint = contentColor,
+            )
+        }
         text?.also {
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
             Text(
+                modifier = Modifier.offset(y = (-1).dp),
                 text = text,
                 color = contentColor,
                 style = MaterialTheme.typography.bodyMedium
@@ -394,7 +342,8 @@ fun Sidebar(
 
     LazyColumn(
         state = listState,
-        modifier = Modifier.padding(padding)
+        modifier = Modifier
+            .padding(padding)
             .simpleVerticalScrollbar(listState),
         verticalArrangement = Arrangement.spacedBy(MEDIUM_PADDING)
     ) {

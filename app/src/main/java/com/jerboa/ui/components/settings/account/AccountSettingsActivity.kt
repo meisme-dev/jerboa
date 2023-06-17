@@ -3,18 +3,21 @@
 package com.jerboa.ui.components.settings.account
 
 import android.util.Log
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.jerboa.db.AccountViewModel
 import com.jerboa.ui.components.common.SimpleTopAppBar
 import com.jerboa.ui.components.common.getCurrentAccount
 import com.jerboa.ui.components.home.SiteViewModel
+import com.jerboa.ui.theme.MEDIUM_PADDING
 
 @Composable
 fun AccountSettingsActivity(
@@ -31,6 +34,7 @@ fun AccountSettingsActivity(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        modifier = Modifier.padding(MEDIUM_PADDING),
         topBar = {
             SimpleTopAppBar(text = "Account Settings", navController = navController)
         },

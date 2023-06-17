@@ -2,6 +2,8 @@ package com.jerboa
 
 import android.app.Application
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -9,17 +11,25 @@ import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideIn
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import arrow.core.Either
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jerboa.db.AccountRepository
 import com.jerboa.db.AccountViewModel
 import com.jerboa.db.AccountViewModelFactory
@@ -92,9 +102,10 @@ class MainActivity : ComponentActivity() {
         AppSettingsViewModelFactory((application as JerboaApplication).appSettingsRepository)
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val accountSync = getCurrentAccountSync(accountViewModel)
         fetchInitialData(accountSync, siteViewModel, homeViewModel)
 
@@ -105,20 +116,24 @@ class MainActivity : ComponentActivity() {
             JerboaTheme(
                 appSettings = appSettings
             ) {
-                val navController = rememberNavController()
+                val navController = rememberAnimatedNavController()
                 val ctx = LocalContext.current
 
                 ShowChangelog(appSettingsViewModel = appSettingsViewModel)
 
-                NavHost(
+                AnimatedNavHost(
                     navController = navController,
                     startDestination = "splashScreen"
                 ) {
                     composable(
-                        route = "login",
+                        route ="login",
                         deepLinks = DEFAULT_LEMMY_INSTANCES.map { instance ->
                             navDeepLink { uriPattern = "$instance/login" }
-                        }
+                        },
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+
                     ) {
                         LoginActivity(
                             navController = navController,
@@ -128,13 +143,17 @@ class MainActivity : ComponentActivity() {
                             homeViewModel = homeViewModel
                         )
                     }
-                    composable(route = "splashScreen") {
+                    composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        route = "splashScreen") {
                         SplashScreenActivity(
                             navController = navController
                         )
                     }
                     composable(
-                        route = "home"
+                        route = "home",
                     ) {
                         HomeActivity(
                             navController = navController,
@@ -182,6 +201,10 @@ class MainActivity : ComponentActivity() {
                     }
                     // Only necessary for community deeplinks
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "c/{name}",
                         deepLinks = DEFAULT_LEMMY_INSTANCES.map { instance ->
                             navDeepLink { uriPattern = "$instance/c/{name}" }
@@ -260,6 +283,10 @@ class MainActivity : ComponentActivity() {
                     }
                     // Necessary for deep links
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "u/{name}",
                         deepLinks = DEFAULT_LEMMY_INSTANCES.map { instance ->
                             navDeepLink { uriPattern = "$instance/u/{name}" }
@@ -295,6 +322,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "communityList?select={select}",
                         arguments = listOf(
                             navArgument("select") {
@@ -314,6 +345,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "createPost",
                         deepLinks = listOf(
                             navDeepLink { mimeType = "text/plain" },
@@ -387,6 +422,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "post/{id}",
                         deepLinks = DEFAULT_LEMMY_INSTANCES.map { instance ->
                             navDeepLink { uriPattern = "$instance/post/{id}" }
@@ -416,6 +455,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "comment/{id}",
                         deepLinks = DEFAULT_LEMMY_INSTANCES.map { instance ->
                             navDeepLink { uriPattern = "$instance/comment/{id}" }
@@ -445,6 +488,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "commentReply"
                     ) {
                         CommentReplyActivity(
@@ -456,6 +503,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "siteSidebar"
                     ) {
                         SiteSidebarActivity(
@@ -464,6 +515,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "communitySidebar"
                     ) {
                         CommunitySidebarActivity(
@@ -472,6 +527,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "commentEdit"
                     ) {
                         CommentEditActivity(
@@ -483,6 +542,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "postEdit"
                     ) {
                         PostEditActivity(
@@ -496,6 +559,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "privateMessageReply"
                     ) {
                         PrivateMessageReplyActivity(
@@ -505,6 +572,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "commentReport/{id}",
                         arguments = listOf(
                             navArgument("id") {
@@ -520,6 +591,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "postReport/{id}",
                         arguments = listOf(
                             navArgument("id") {
@@ -535,6 +610,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "settings"
                     ) {
                         SettingsActivity(
@@ -543,6 +622,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "lookAndFeel"
                     ) {
                         LookAndFeelActivity(
@@ -551,6 +634,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "accountSettings",
                         deepLinks = DEFAULT_LEMMY_INSTANCES.map { instance ->
                             navDeepLink { uriPattern = "$instance/settings" }
@@ -564,6 +651,10 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(
+                        enterTransition = {
+                            slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                        },
+                        
                         route = "about"
                     ) {
                         AboutActivity(

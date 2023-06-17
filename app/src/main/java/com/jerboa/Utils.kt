@@ -721,6 +721,8 @@ enum class ThemeMode {
 enum class ThemeColor {
     Dynamic,
     Green,
+    Blue,
+    Monochrome,
     Pink
 }
 

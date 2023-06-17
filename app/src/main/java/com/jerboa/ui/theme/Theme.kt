@@ -35,13 +35,15 @@ fun JerboaTheme(
     val dynamicPair = if (android12OrLater) {
         Pair(dynamicLightColorScheme(ctx), dynamicDarkColorScheme(ctx))
     } else {
-        pink()
+        blue()
     }
 
     val colorPair = when (themeColor) {
         ThemeColor.Dynamic -> dynamicPair
         ThemeColor.Green -> green()
         ThemeColor.Pink -> pink()
+        ThemeColor.Monochrome -> monochrome()
+        ThemeColor.Blue -> blue()
     }
 
     val systemTheme = if (!isSystemInDarkTheme()) {

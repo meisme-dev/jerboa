@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -27,7 +28,10 @@ import com.jerboa.db.Account
 import com.jerboa.isScrolledToEnd
 import com.jerboa.ui.components.common.simpleVerticalScrollbar
 import com.jerboa.ui.components.home.Tagline
+import com.jerboa.ui.theme.MEDIUM_PADDING
 import com.jerboa.ui.theme.SMALL_PADDING
+import com.jerboa.ui.theme.darker
+import com.jerboa.ui.theme.muted
 
 @Composable
 fun PostListings(
@@ -100,7 +104,7 @@ fun PostListings(
                     account = account, // TODO can't know with many posts
                     postViewMode = postViewMode
                 )
-                Divider(modifier = Modifier.padding(bottom = SMALL_PADDING))
+                Divider(thickness = SMALL_PADDING, color = MaterialTheme.colorScheme.background.darker)
             }
         }
     }

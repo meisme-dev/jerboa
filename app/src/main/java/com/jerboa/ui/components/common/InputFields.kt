@@ -61,6 +61,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -664,7 +666,9 @@ fun PreviewLines(
 ) {
     Text(
         text = text,
+        color = MaterialTheme.colorScheme.onBackground.muted,
         style = MaterialTheme.typography.bodyMedium,
+        fontWeight = FontWeight.Normal,
         maxLines = 5,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier
@@ -674,14 +678,15 @@ fun PreviewLines(
 @Composable
 fun MyMarkdownText(
     markdown: String,
-    color: Color = MaterialTheme.colorScheme.onSurface
+    color: Color = MaterialTheme.colorScheme.onSurface,
+    style: TextStyle = MaterialTheme.typography.bodyMedium
 ) {
     MarkdownText(
         markdown = markdown,
         modifier = Modifier.fillMaxSize(),
         color = color,
-        fontSize = MaterialTheme.typography.bodyLarge.fontSize.times(MARKDOWN_FONT_MULTIPLIER)
-//        style = MaterialTheme.typography.titleLarge,
+//        fontSize = MaterialTheme.typography.bodyLarge.fontSize.times(MARKDOWN_FONT_MULTIPLIER)
+        style = style,
 //        imageLoader =  LocalImageLoader.current
     )
 }

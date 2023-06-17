@@ -10,28 +10,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
-import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.LocationCity
 import androidx.compose.material.icons.outlined.Login
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Sort
 import androidx.compose.material.icons.outlined.ViewAgenda
@@ -43,6 +36,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -57,7 +51,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -72,21 +65,19 @@ import com.jerboa.datatypes.api.MyUserInfo
 import com.jerboa.datatypes.samplePersonSafe
 import com.jerboa.db.Account
 import com.jerboa.db.AccountViewModel
+import com.jerboa.personNameShown
+import com.jerboa.ui.components.common.CircularIcon
 import com.jerboa.ui.components.common.IconAndTextDrawerItem
-import com.jerboa.ui.components.common.LargerCircularIcon
 import com.jerboa.ui.components.common.ListingTypeOptionsDialog
 import com.jerboa.ui.components.common.MyMarkdownText
-import com.jerboa.ui.components.common.PictrsBannerImage
 import com.jerboa.ui.components.common.PostViewModeDialog
 import com.jerboa.ui.components.common.SortOptionsDialog
 import com.jerboa.ui.components.common.SortTopOptionsDialog
 import com.jerboa.ui.components.common.simpleVerticalScrollbar
 import com.jerboa.ui.components.community.CommunityLinkLarger
-import com.jerboa.ui.components.person.PersonName
-import com.jerboa.ui.theme.DRAWER_BANNER_SIZE
 import com.jerboa.ui.theme.LARGE_PADDING
+import com.jerboa.ui.theme.MEDIUM_PADDING
 import com.jerboa.ui.theme.SMALL_PADDING
-import com.jerboa.ui.theme.XL_PADDING
 import com.jerboa.ui.theme.muted
 import com.jerboa.unreadCountTotal
 import kotlinx.coroutines.CoroutineScope
@@ -114,7 +105,6 @@ fun Drawer(
         showAccountAddMode = showAccountAddMode,
         onClickShowAccountAddMode = { showAccountAddMode = !showAccountAddMode }
     )
-    Divider()
     // Drawer items
     DrawerContent(
         accountViewModel = accountViewModel,
@@ -194,72 +184,82 @@ fun DrawerItemsMain(
 
     LazyColumn(
         state = listState,
-        modifier = Modifier.simpleVerticalScrollbar(listState)
+        modifier = Modifier
+            .simpleVerticalScrollbar(listState)
+            .padding(horizontal = LARGE_PADDING),
+        verticalArrangement = Arrangement.spacedBy(MEDIUM_PADDING)
     ) {
-        if (!follows.isNullOrEmpty()) {
-            item {
-                IconAndTextDrawerItem(
-                    text = "Subscribed",
-                    icon = Icons.Outlined.Bookmarks,
-                    onClick = { onClickListingType(ListingType.Subscribed) }
-                )
-            }
-        }
-        item {
-            IconAndTextDrawerItem(
-                text = "Local",
-                icon = Icons.Outlined.LocationCity,
-                onClick = { onClickListingType(ListingType.Local) }
-            )
-        }
-        item {
-            IconAndTextDrawerItem(
-                text = "All",
-                icon = Icons.Outlined.Public,
-                onClick = { onClickListingType(ListingType.All) }
-            )
-        }
-        item {
-            myUserInfo?.also {
-                IconAndTextDrawerItem(
-                    text = "Saved",
-                    icon = Icons.Outlined.Bookmarks,
-                    onClick = onClickSaved
-                )
-            }
-        }
+
+//        if (!follows.isNullOrEmpty()) {
+//            item {
+//                NavigationDrawerItem(
+//                    label = {Text("Subscribed")},
+//                    icon = {Icon(Icons.Outlined.Bookmarks, "TODO")},
+//                    selected = false,
+//                    onClick = { onClickListingType(ListingType.Subscribed) }
+//                )
+//            }
+//        }
+
+//        item {
+//            NavigationDrawerItem(
+//                label = {Text("Local")},
+//                icon = {Icon(Icons.Outlined.Dns, "TODO")},
+//                selected = false,
+//                onClick = { onClickListingType(ListingType.Local) }
+//            )
+//        }
+//        item {
+//            NavigationDrawerItem(
+//                label = {Text("All")},
+//                icon = {Icon(Icons.Outlined.Public, "TODO")},
+//                selected = false,
+//                onClick = { onClickListingType(ListingType.All) }
+//            )
+//        }
+//        item {
+//            myUserInfo?.also {
+//                NavigationDrawerItem(
+//                    label = {Text("Saved")},
+//                    icon = {Icon(Icons.Outlined.Bookmarks, "TODO")},
+//                    selected = false,
+//                    onClick = onClickSaved
+//                )
+//            }
+//        }
         item {
             myUserInfo?.also {
                 Divider()
             }
         }
+//        item {
+//            myUserInfo?.also {
+//                NavigationDrawerItem(
+//                    label = {Text("Profile")},
+//                    icon = {Icon(Icons.Outlined.Person, "TODO")},
+//                    selected = false,
+//                    onClick = onClickProfile
+//                )
+//            }
+//        }
+//        item {
+//            myUserInfo?.also {
+//                NavigationDrawerItem(
+//                    label = {Text("Inbox")},
+//                    icon = {Icon(Icons.Outlined.Email, "TODO")},
+//                    onClick = onClickInbox,
+//                    selected = false,
+//                    badge = {Text(totalUnreads.toString())}
+//                )
+//            }
+//        }
         item {
-            myUserInfo?.also {
-                IconAndTextDrawerItem(
-                    text = "Profile",
-                    icon = Icons.Outlined.Person,
-                    onClick = onClickProfile
-                )
-            }
-        }
-        item {
-            myUserInfo?.also {
-                IconAndTextDrawerItem(
-                    text = "Inbox",
-                    icon = Icons.Outlined.Email,
-                    onClick = onClickInbox,
-                    iconBadgeCount = totalUnreads
-                )
-            }
-        }
-        item {
-            myUserInfo?.also {
-                IconAndTextDrawerItem(
-                    text = "Settings",
-                    icon = Icons.Outlined.Settings,
-                    onClick = onClickSettings
-                )
-            }
+            NavigationDrawerItem(
+                label = {Text("Settings")},
+                icon = {Icon(Icons.Outlined.Settings, "TODO")},
+                selected = false,
+                onClick = onClickSettings
+            )
         }
         item {
             myUserInfo?.also {
@@ -352,27 +352,48 @@ fun DrawerHeader(
     onClickShowAccountAddMode: () -> Unit,
     showAccountAddMode: Boolean = false
 ) {
-    val sizeMod = Modifier
-        .fillMaxWidth()
-        .height(DRAWER_BANNER_SIZE)
-
-    Box(
-        modifier = sizeMod
-            .clickable(onClick = onClickShowAccountAddMode)
-    ) {
-        myPerson?.banner?.also {
-            PictrsBannerImage(
-                url = it
-            )
-        }
-        // banner
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = sizeMod
-                .padding(XL_PADDING)
-        ) {
-            AvatarAndAccountName(myPerson)
+//    val sizeMod = Modifier
+//        .fillMaxWidth()
+//
+//    Box(
+//        modifier = sizeMod
+//            .clickable(onClick = onClickShowAccountAddMode)
+//    ) {
+//        myPerson?.banner?.also {
+//            PictrsBannerImage(
+//                url = it
+//            )
+//        }
+//        // banner
+//        Row(
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//            verticalAlignment = Alignment.CenterVertically,
+//            modifier = sizeMod
+//                .padding(XL_PADDING)
+//        ) {
+//            AvatarAndAccountName(myPerson)
+//            Icon(
+//                imageVector = if (showAccountAddMode) {
+//                    Icons.Outlined.ExpandLess
+//                } else {
+//                    Icons.Outlined.ExpandMore
+//                },
+//                contentDescription = "TODO"
+//            )
+//        }
+//    }
+    NavigationDrawerItem(
+        modifier = Modifier.padding(horizontal = LARGE_PADDING)
+            .padding(top = LARGE_PADDING)
+            .padding(bottom = MEDIUM_PADDING),
+        label = { Text(myPerson?.let { personNameShown(it) } ?: run { "Anonymous" }) },
+        selected = false,
+        icon = {
+            if (myPerson != null) {
+                myPerson.avatar?.let { CircularIcon(icon = it) }
+            }
+        },
+        badge = {
             Icon(
                 imageVector = if (showAccountAddMode) {
                     Icons.Outlined.ExpandLess
@@ -381,24 +402,14 @@ fun DrawerHeader(
                 },
                 contentDescription = "TODO"
             )
-        }
-    }
+        },
+        onClick = { onClickShowAccountAddMode.invoke() }
+    )
 }
 
 @Composable
 fun AvatarAndAccountName(myPerson: PersonSafe?) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(SMALL_PADDING)
-    ) {
-        myPerson?.avatar?.also {
-            LargerCircularIcon(icon = it)
-        }
-        PersonName(
-            person = myPerson,
-            color = Color.White
-        )
-    }
+
 }
 
 @Preview
@@ -416,10 +427,12 @@ fun HomeHeaderTitle(
     selectedListingType: ListingType
 ) {
     Column {
+
         Text(
             text = selectedListingType.toString(),
             style = MaterialTheme.typography.titleLarge
         )
+
         Text(
             text = selectedSortType.toString(),
             style = MaterialTheme.typography.titleSmall
@@ -427,6 +440,7 @@ fun HomeHeaderTitle(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeHeader(
     scope: CoroutineScope,
@@ -509,30 +523,52 @@ fun HomeHeader(
     TopAppBar(
         scrollBehavior = scrollBehavior,
         title = {
-            HomeHeaderTitle(
-                selectedSortType = selectedSortType,
-                selectedListingType = selectedListingType
-            )
         },
         navigationIcon = {
-            IconButton(onClick = {
-                scope.launch {
-                    drawerState.open()
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = {
+                    scope.launch {
+                        drawerState.open()
+                    }
+                }) {
+                    Icon(
+                        Icons.Outlined.Menu,
+                        contentDescription = "Menu"
+                    )
                 }
-            }) {
-                Icon(
-                    Icons.Outlined.Menu,
-                    contentDescription = "Menu"
-                )
+                Box(modifier = Modifier
+                    .clickable {
+                        showListingTypeOptions = !showListingTypeOptions
+                    }
+                    .padding(MEDIUM_PADDING)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(SMALL_PADDING)
+                    ) {
+                        Text(
+                            text = selectedListingType.toString(),
+                            maxLines = 1,
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Icon(
+                            Icons.Outlined.ExpandMore,
+                            contentDescription = "TODO"
+                        )
+                    }
+                }
             }
         },
+
         // No Idea why, but the tint for this is muted?
         actions = {
+
             IconButton(onClick = {
-                showListingTypeOptions = !showListingTypeOptions
+                navController.navigate("communityList")
             }) {
                 Icon(
-                    Icons.Outlined.FilterList,
+                    Icons.Outlined.Search,
                     contentDescription = "TODO"
                 )
             }
